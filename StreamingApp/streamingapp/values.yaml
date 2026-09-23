@@ -56,6 +56,7 @@ ingress:
 config:
   clientUrls: "http://streamingapp.eks"
   awsRegion: "us-east-1"
+  s3Bucket: "your-bucket-name-here"
   mongoHost: "mongo-0.mongo-svc"
   mongoPort: "27017"
   mongoDbName: "streamingdb"

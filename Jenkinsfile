@@ -36,45 +36,55 @@ pipeline {
 
         stage('Build & Push Auth Service') {
             steps {
-                sh "docker build -t ${ECR_REGISTRY}/streaming-auth:${IMAGE_TAG} ./backend/authService"
-                sh "docker push ${ECR_REGISTRY}/streaming-auth:${IMAGE_TAG}"
+                dir('StreamingApp') {
+                    sh "docker build -t ${ECR_REGISTRY}/streaming-auth:${IMAGE_TAG} ./backend/authService"
+                    sh "docker push ${ECR_REGISTRY}/streaming-auth:${IMAGE_TAG}"
+                }
             }
         }
 
         stage('Build & Push Streaming Service') {
             steps {
-                sh "docker build -t ${ECR_REGISTRY}/streaming-streaming:${IMAGE_TAG} -f ./backend/streamingService/Dockerfile ./backend"
-                sh "docker push ${ECR_REGISTRY}/streaming-streaming:${IMAGE_TAG}"
+                dir('StreamingApp') {
+                    sh "docker build -t ${ECR_REGISTRY}/streaming-streaming:${IMAGE_TAG} -f ./backend/streamingService/Dockerfile ./backend"
+                    sh "docker push ${ECR_REGISTRY}/streaming-streaming:${IMAGE_TAG}"
+                }
             }
         }
 
         stage('Build & Push Admin Service') {
             steps {
-                sh "docker build -t ${ECR_REGISTRY}/streaming-admin:${IMAGE_TAG} -f ./backend/adminService/Dockerfile ./backend"
-                sh "docker push ${ECR_REGISTRY}/streaming-admin:${IMAGE_TAG}"
+                dir('StreamingApp') {
+                    sh "docker build -t ${ECR_REGISTRY}/streaming-admin:${IMAGE_TAG} -f ./backend/adminService/Dockerfile ./backend"
+                    sh "docker push ${ECR_REGISTRY}/streaming-admin:${IMAGE_TAG}"
+                }
             }
         }
 
         stage('Build & Push Chat Service') {
             steps {
-                sh "docker build -t ${ECR_REGISTRY}/streaming-chat:${IMAGE_TAG} -f ./backend/chatService/Dockerfile ./backend"
-                sh "docker push ${ECR_REGISTRY}/streaming-chat:${IMAGE_TAG}"
+                dir('StreamingApp') {
+                    sh "docker build -t ${ECR_REGISTRY}/streaming-chat:${IMAGE_TAG} -f ./backend/chatService/Dockerfile ./backend"
+                    sh "docker push ${ECR_REGISTRY}/streaming-chat:${IMAGE_TAG}"
+                }
             }
         }
 
         stage('Build & Push Frontend') {
             steps {
-                sh """
-                    docker build \
-                      --build-arg REACT_APP_AUTH_API_URL=${params.INGRESS_HOST}/api/auth \
-                      --build-arg REACT_APP_STREAMING_API_URL=${params.INGRESS_HOST}/api \
-                      --build-arg REACT_APP_STREAMING_PUBLIC_URL=${params.INGRESS_HOST}/api/streaming \
-                      --build-arg REACT_APP_ADMIN_API_URL=${params.INGRESS_HOST}/api/admin \
-                      --build-arg REACT_APP_CHAT_API_URL=${params.INGRESS_HOST}/api/chat \
-                      --build-arg REACT_APP_CHAT_SOCKET_URL=${params.INGRESS_HOST} \
-                      -t ${ECR_REGISTRY}/streaming-frontend:${IMAGE_TAG} ./frontend
-                """
-                sh "docker push ${ECR_REGISTRY}/streaming-frontend:${IMAGE_TAG}"
+                dir('StreamingApp') {
+                    sh """
+                        docker build \
+                          --build-arg REACT_APP_AUTH_API_URL=${params.INGRESS_HOST}/api/auth \
+                          --build-arg REACT_APP_STREAMING_API_URL=${params.INGRESS_HOST}/api \
+                          --build-arg REACT_APP_STREAMING_PUBLIC_URL=${params.INGRESS_HOST}/api/streaming \
+                          --build-arg REACT_APP_ADMIN_API_URL=${params.INGRESS_HOST}/api/admin \
+                          --build-arg REACT_APP_CHAT_API_URL=${params.INGRESS_HOST}/api/chat \
+                          --build-arg REACT_APP_CHAT_SOCKET_URL=${params.INGRESS_HOST} \
+                          -t ${ECR_REGISTRY}/streaming-frontend:${IMAGE_TAG} ./frontend
+                    """
+                    sh "docker push ${ECR_REGISTRY}/streaming-frontend:${IMAGE_TAG}"
+                }
             }
         }
 

@@ -1,0 +1,66 @@
+global:
+  dockerHubUser: "740393042029.dkr.ecr.us-east-1.amazonaws.com"
+
+services:
+  auth:
+    image:
+      repository: "740393042029.dkr.ecr.us-east-1.amazonaws.com/streaming-auth"
+      tag: "latest"
+      pullPolicy: Always
+    replicas: 1
+    port: 3001
+
+  streaming:
+    image:
+      repository: "740393042029.dkr.ecr.us-east-1.amazonaws.com/streaming-streaming"
+      tag: "latest"
+      pullPolicy: Always
+    replicas: 1
+    port: 3002
+
+  admin:
+    image:
+      repository: "740393042029.dkr.ecr.us-east-1.amazonaws.com/streaming-admin"
+      tag: "latest"
+      pullPolicy: Always
+    replicas: 1
+    port: 3003
+
+  chat:
+    image:
+      repository: "740393042029.dkr.ecr.us-east-1.amazonaws.com/streaming-chat"
+      tag: "latest"
+      pullPolicy: Always
+    replicas: 1
+    port: 3004
+
+  frontend:
+    image:
+      repository: "740393042029.dkr.ecr.us-east-1.amazonaws.com/streaming-frontend"
+      tag: "latest"
+      pullPolicy: Always
+    replicas: 1
+    port: 80
+
+mongo:
+  image: mongo:6.0
+  port: 27017
+  storageSize: 5Gi
+  storageClassName: gp2
+
+ingress:
+  enabled: true
+  className: nginx
+  host: streamingapp.eks
+
+config:
+  clientUrls: "http://streamingapp.eks"
+  awsRegion: "us-east-1"
+  mongoHost: "mongo-0.mongo-svc"
+  mongoPort: "27017"
+  mongoDbName: "streamingdb"
+
+secrets:
+  jwtSecret: "super-secret-jwt-token-key"
+  awsAccessKeyId: "MOCK_AWS_KEY_ID"
+  awsSecretAccessKey: "MOCK_AWS_SECRET_KEY"

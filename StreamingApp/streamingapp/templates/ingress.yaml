@@ -1,0 +1,75 @@
+﻿apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$2
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "chat-svc"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api/auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-svc
+                port:
+                  number: {{ .Values.services.auth.port }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-main-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "chat-svc"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api/streaming
+            pathType: Prefix
+            backend:
+              service:
+                name: streaming-svc
+                port:
+                  number: {{ .Values.services.streaming.port }}
+          - path: /api/admin
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-svc
+                port:
+                  number: {{ .Values.services.admin.port }}
+          - path: /api/chat
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-svc
+                port:
+                  number: {{ .Values.services.chat.port }}
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-svc
+                port:
+                  number: {{ .Values.services.chat.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-svc
+                port:
+                  number: 80

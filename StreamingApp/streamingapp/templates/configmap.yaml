@@ -1,0 +1,12 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  CLIENT_URLS: {{ .Values.config.clientUrls | quote }}
+  AWS_REGION: {{ .Values.config.awsRegion | quote }}
+  MONGO_URI: "mongodb://{{ .Values.config.mongoHost }}:{{ .Values.config.mongoPort }}/{{ .Values.config.mongoDbName }}"
+  AUTH_PORT: {{ .Values.services.auth.port | quote }}
+  STREAMING_PORT: {{ .Values.services.streaming.port | quote }}
+  ADMIN_PORT: {{ .Values.services.admin.port | quote }}
+  CHAT_PORT: {{ .Values.services.chat.port | quote }}

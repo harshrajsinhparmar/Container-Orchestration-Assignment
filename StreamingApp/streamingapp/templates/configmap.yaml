@@ -8,6 +8,7 @@ data:
   MONGO_URI: "mongodb://{{ .Values.config.mongoHost }}:{{ .Values.config.mongoPort }}/{{ .Values.config.mongoDbName }}"
   AUTH_PORT: {{ .Values.services.auth.port | quote }}
   AWS_S3_BUCKET: {{ .Values.config.s3Bucket | quote }}
+  STREAMING_PUBLIC_URL: {{ .Values.config.streamingPublicUrl | quote }}
   STREAMING_PORT: {{ .Values.services.streaming.port | quote }}
   ADMIN_PORT: {{ .Values.services.admin.port | quote }}
   CHAT_PORT: {{ .Values.services.chat.port | quote }}
